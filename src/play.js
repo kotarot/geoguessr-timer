@@ -18,7 +18,7 @@ const streakTime = {
   startTime: null,
   roundTime: null,
   totalTime: null,
-  roundTimes: []
+  roundTimes: [],
 };
 
 /**
@@ -107,7 +107,7 @@ const detectStreak = () => {
   if (roundNode) {
     isStreak = false;
     if (roundNode.querySelector('div[class^="status_streaksValue"]')) {
-        isStreak = true;
+      isStreak = true;
     }
     // console.log({ isStreak });
   }
@@ -131,10 +131,10 @@ const resetGame = () => {
     streakTime.startTime = null;
     streakTime.roundTime = null;
     for (let i = 1; i <= 5; i += 1) {
-        rndNode = document.querySelector(`#round${i}-time`);
-        if (rndNode) {
-            rndNode.textContent = '--:--';
-        }
+      const rndNode = document.querySelector(`#round${i}-time`);
+      if (rndNode) {
+        rndNode.textContent = '--:--';
+      }
     }
   }
 };
@@ -180,21 +180,21 @@ const showFinalTimes = () => {
 const streakSummary = () => {
   if (streakTime.totalTime == null) return;
 
-  titleNode = document.querySelector('h2[class^="streak-final-result_title"]');
-  timeNode = document.createElement("h2");
-  timeNode.textContent = "The total game time was " + streakTime.totalTime;
+  const titleNode = document.querySelector('h2[class^="streak-final-result_title"]');
+  let timeNode = document.createElement('h2');
+  timeNode.textContent = `The total game time was ${streakTime.totalTime}`;
   timeNode.className = titleNode.className;
   titleNode.parentNode.insertBefore(timeNode, titleNode.nextSibling);
 
-  roundsList = document.querySelectorAll('li[class^="streak-result-list_listItem"]');
-  for (let i = 0; i < roundsList.length; i++) {
+  const roundsList = document.querySelectorAll('li[class^="streak-result-list_listItem"]');
+  for (let i = 0; i < roundsList.length; i += 1) {
     timeNode = document.createElement('div');
     timeNode.innerHTML = streakTime.roundTimes[i];
     timeNode.style.flexGrow = 1;
-    timeNode.style.textAlign = "right";
+    timeNode.style.textAlign = 'right';
     roundsList[i].append(timeNode);
   }
-}
+};
 
 /**
  * Update round node time
@@ -216,21 +216,20 @@ const setTotalTime = (time) => {
 const getCurrentRound = () => {
   const roundNode = document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]');
   if (!roundNode) {
-      return null;
+    return null;
   }
   detectStreak();
   if (!isStreak) {
-      return parseInt(roundNode.children[1].textContent.split(/\//gi)[0].trim(), 10);
-  } else {
-      return parseInt(roundNode.children[0].textContent.trim(), 10);
+    return parseInt(roundNode.children[1].textContent.split(/\//gi)[0].trim(), 10);
   }
+  return parseInt(roundNode.children[0].textContent.trim(), 10);
 };
 
 const getMaxRounds = () => {
   const roundNode = document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]');
+  console.log('getMaxRound roundNode', roundNode)
   return parseInt(roundNode.children[1].textContent.split(/\//gi)[1].trim(), 10);
 };
-
 
 /**
  * Create time nodes in game status bar
@@ -240,11 +239,12 @@ const createTimeNodes = () => {
   if (!roundNode) {
     return null;
   }
-  if (getMaxRounds() == 1 || config.rounds != true) {
-      flexNode = roundNode.parentNode;
+  let flexNode;
+  if (getMaxRounds() === 1 || config.rounds !== true) {
+    flexNode = roundNode.parentNode;
   } else {
-      flexNode = roundNode.parentNode.cloneNode(false);
-      flexNode.style.marginLeft = '1rem'; // a little space
+    flexNode = roundNode.parentNode.cloneNode(false);
+    flexNode.style.marginLeft = '1rem'; // a little space
   }
   roundNode.parentNode.parentNode.append(flexNode);
 
@@ -257,8 +257,8 @@ const createTimeNodes = () => {
         rNode.innerHTML = `<div class="${roundNode.children[0].getAttribute('class')}">Round ${i}</div><div id="round${i}-time" class="${roundNode.children[1].getAttribute('class')}">--:--</div>`;
         flexNode.append(rNode);
         // Hide round 1 and show only total if this is a Quick Play.
-        if (getMaxRounds() == 1) {
-            rNode.style.visibility = "hidden";
+        if (getMaxRounds() === 1) {
+          rNode.style.visibility = 'hidden';
         }
       }
     }
@@ -333,7 +333,7 @@ const stopRound = () => {
   const now = new Date();
   if (isStreak) {
     if (streakTime.roundTime != null) {
-      console.log('Last round time was ' + msToTime(now - streakTime.roundTime, false) + ', Total streak time so far ' + msToTime(now - streakTime.startTime, false));
+      console.log(`Last round time was ${msToTime(now - streakTime.roundTime, false)}, Total streak time so far ${msToTime(now - streakTime.startTime, false)}`);
       streakTime.roundTimes.push(msToTime(now - streakTime.roundTime, false));
       streakTime.totalTime = msToTime(now - streakTime.startTime, false);
       streakTime.roundTime = null;
@@ -364,12 +364,12 @@ const tick = () => {
       }
       if (streakTime.startTime == null && document.querySelector('div[class^="status_inner__"]>div[data-qa="round-number"]')
           && !document.querySelector('button[data-qa="play-again-button"]')) {
-          console.log("starttime null, " + streakTime.startTime);
-          startRound();
+        console.log(`starttime null, ${streakTime.startTime}`);
+        startRound();
       }
       setTotalTime(msToTime(now - streakTime.startTime));
       if (streakTime.roundTime) {
-          setRoundTime(1, msToTime(now - streakTime.roundTime));
+        setRoundTime(1, msToTime(now - streakTime.roundTime));
       }
     } else if (currentRound > 0 && currentRound <= getMaxRounds()) {
       if (currentMap == null) {
@@ -400,14 +400,14 @@ const tick = () => {
       }
     }
     if (inGame) {
-        if (document.querySelector('button[data-qa="play-again-button"]')) {
-          console.log("Play again button detected. Game Over.");
-          resetGame();
-        }
+      if (document.querySelector('button[data-qa="play-again-button"]')) {
+        console.log('Play again button detected. Game Over.');
+        resetGame();
+      }
     }
     // if there are more than 1 title, streakSummary is already run.
-    if (document.querySelectorAll('h2[class^="streak-final-result_title"]').length == 1) {
-        streakSummary();
+    if (document.querySelectorAll('h2[class^="streak-final-result_title"]').length === 1) {
+      streakSummary();
     }
   } else {
     resetGame();
@@ -425,7 +425,7 @@ const init = () => {
         if (resultLayout) {
           if (roundRunning) stopRound();
         } else if (currentRound !== getCurrentRound() && !roundRunning) {
-          console.log("startround from init " + currentRound + " " + getCurrentRound());
+          console.log(`startround from init ${currentRound} ${getCurrentRound()}`);
           startRound();
         }
       }
